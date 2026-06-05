@@ -1,0 +1,48 @@
+# UnitConverter_29 — Cursor Rules (SSOT: README.md + 프로젝트가이드 PDF)
+
+## 도메인
+- 길이 단위 CLI. 입력 형식: `unit:value` (예: `meter:2.5`)
+- 기본 단위: meter, feet, yard
+- 변환 비율 SSOT: 1m = 3.28084 ft = 1.09361 yd (feet↔yard는 meter 경유)
+- P1 추가: `units.json` 외부 설정, 동적 등록(`cubit=0.4572m`), `--format json|csv|table`
+
+## 아키텍처 (OCP / SRP)
+```
+unit_converter/
+  domain/          length_unit, unit_registry, converter
+  infrastructure/  config_loader
+  app/             input_parser, output_formatter
+  cli.py           진입점: python -m unit_converter "meter:2.5"
+```
+- OCP: 새 단위 = `LengthUnit` 구현 + `registry.register()` — 변환기 코드 비수정
+- SRP: Parser / Registry / Converter / Formatter 각각 단일 책임
+
+## Dual-Track TDD
+| Track | ID 접두 | 테스트 파일 | 범위 |
+|-------|---------|-------------|------|
+| A (UI/Boundary) | U-* | tests/test_cli.py | CLI 입출력, 형식/음수/미지단위, --format |
+| B (Domain/Logic) | D-* | tests/test_converter.py | to_meter, convert_all, register |
+
+## TDD 사이클 (RED → GREEN → REFACTOR)
+- **RED**: 구현 금지. `pytest.fail("RED: [Test ID]")` 허용. skip/xfail/assert 완화 금지
+- **GREEN**: 선택 RED 1묶음만 최소 구현. **1 RED = 1 커밋**
+- **REFACTOR**: 전체 `pytest` PASS 후, Change Budget(파일 ≤ 3) 내 구조 개선
+- 비율 상수 하드코딩 금지 → `units.json` 또는 `constants` SSOT
+
+## C2C (Concept-to-Code Traceability)
+1. PRD 판단 항목만 To-Do로 변환
+2. 1 To-Do : 1 Test Case (U-* 또는 D-*)
+3. RED 먼저 → FAIL 확인 → GREEN
+
+## AI 행동 규칙
+- **언어**: 한국어로 응답
+- **TDD 작업 시 선언**: Phase(RED/GREEN/REFACTOR) · Layer(domain/app/infrastructure) · Track(A/B)
+- **커밋**: 사용자 명시 요청 시에만 (`git commit` 자동 실행 금지)
+- **범위**: 요청된 Test ID·파일만 수정. 미요청 리팩터·파일 생성 금지
+- **검증**: GREEN/REFACTOR 후 `pytest` 실행 결과 보고
+
+## 금지 사항
+- RED 단계에서 프로덕션 구현 코드 작성
+- 테스트 skip/xfail로 RED 우회
+- `UnitConverter.py` 레거시에 신규 로직 추가 (신규는 `unit_converter/` 패키지)
+- SSOT 없는 변환 비율·단위 목록 하드코딩
