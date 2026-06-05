@@ -1,6 +1,8 @@
 # /session-export — 회고 보고서·Transcript Export·README 갱신
 
-UnitConverter_29 **실습 회고** — `Report/`에 보고서를 생성하고, `Prompting/`에 Agent Transcript를 **번호 순**으로 Export한 뒤 `README.md`를 갱신한다.
+UnitConverter_29 **실습 회고** — `Report/`에 보고서를 생성하고, **요청된 세션**의 Agent Transcript만 `Prompting/`에 Export한 뒤 `README.md`를 갱신한다.
+
+> **범위**: 전체 Transcript 일괄 Export가 **아니다**. 사용자가 `/session-export`를 실행한 **해당 세션**(또는 명시한 Session ID)만 Export한다.
 
 ## 필수 선언
 
@@ -26,21 +28,35 @@ Phase: export | Scope: session-report | Track: Documentation
 
 ## 절차
 
-### 1. Transcript 수집
+### 1. Export 대상 세션 결정
+
+**기본**: `/session-export`를 실행한 **현재 세션**만 Export한다.
+
+**명시 지정** (선택): 사용자가 Session ID·파일명·「이번 세션」 등으로 지정하면 **그 세션만** Export한다.
+
+| 상황 | 동작 |
+|------|------|
+| 별도 지정 없음 | **현재 대화 세션** 1개만 |
+| Session ID 지정 | 해당 ID의 Transcript 1개만 |
+| 여러 ID 나열 | 나열된 세션만 (각각 별도 `Prompting/NNN-*.md`) |
+
+**하지 않는 것**
+
+- `agent-transcripts/` 아래 `*.jsonl` **전체 탐색·일괄 Export** 금지
+- 과거 세션을 사용자 요청 없이 자동 추가 Export 금지
 
 Agent Transcript 원본 경로 (Cursor 프로젝트별):
 
 ```
-%USERPROFILE%\.cursor\projects\c-DEV-UnitConverter-29\agent-transcripts\**\*.jsonl
+%USERPROFILE%\.cursor\projects\c-DEV-UnitConverter-29\agent-transcripts\<session-id>\<session-id>.jsonl
 ```
 
-- `*.jsonl` 전부 탐색 (Glob 또는 Shell).
-- **수정 시각 오름차순** 정렬 (가장 오래된 세션 = 001).
-- 현재 세션(이 `/session-export` 실행 중인 대화)도 포함한다.
+- 대상 Session ID의 `.jsonl` **1개**(또는 명시된 개수만) 읽기 전용으로 열기.
+- 현재 세션 ID는 Cursor가 제공하는 transcript 경로·대화 컨텍스트에서 확인한다.
 
 ### 2. `Prompting/` Export
 
-각 Transcript를 **읽기 쉬운 Markdown**으로 변환해 저장한다.
+**대상 세션**의 Transcript를 **읽기 쉬운 Markdown**으로 변환해 저장한다. (이번 실행당 1세션 = 1파일이 일반적)
 
 **파일명**: `Prompting/NNN-<주제-slug>.md`
 
@@ -79,7 +95,8 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 | User | `<user_query>` 태그 제거 · `<attached_files>` 등 시스템 태그는 `[첨부]` 한 줄 요약 |
 | Assistant | `type: text`만 본문에 포함 · `tool_use`는 `[Tool: 이름]` 한 줄로 요약 (선택) |
 | REDACTED | `[내용 생략]`으로 대체 |
-| 중복 Export | 동일 Session ID가 이미 `Prompting/`에 있으면 **덮어쓰지 않고** 번호·내용 비교 후 갱신 여부 판단 |
+| 중복 Export | 동일 Session ID가 이미 `Prompting/`에 있으면 **덮어쓰지 않고** 스킵 (또는 사용자가 갱신 요청 시에만 해당 파일 업데이트) |
+| 범위 | **요청 세션 외** Transcript는 Export하지 않음 |
 
 ### 3. `Report/` 보고서 생성
 
@@ -92,7 +109,8 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 
 - **작성일**: YYYY-MM-DD
 - **프로젝트**: UnitConverter_29
-- **Transcript 수**: N개 (`Prompting/` 참조)
+- **이번 Export 세션**: `<session-id>` → `Prompting/NNN-….md`
+- **Prompting 누적**: N개 (`Prompting/` 전체 목록 참조)
 
 ## 1. 실습 목표와 달성도
 
@@ -173,8 +191,9 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 ```markdown
 ## Session Export 완료
 
+- **Export 대상**: 현재 세션 `<session-id>` (또는 사용자 지정 세션)
 - **Report**: Report/001-회고-보고서.md
-- **Prompting**: N개 Export (001 ~ 00N)
+- **Prompting**: 이번 1건 → `Prompting/NNN-<주제>.md` (누적 N개)
 - **README.md**: Commands·산출물 폴더·회고 링크 갱신
 - **pytest**: (실행했다면) passed/failed 요약
 ```
@@ -188,6 +207,7 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 | **프로덕션·테스트 코드 임의 수정** | Export·문서 작업만 |
 | **Transcript 원본(jsonl) 삭제·이동** | 읽기 전용 |
 | **번호 건너뛰기·임의 재번호** | 001부터 연속 |
+| **전체 Transcript 일괄 Export** | 요청 세션만 Export |
 | **git commit** (명시 요청 없을 때) | 사용자 요청 시만 |
 
 ---
