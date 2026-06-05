@@ -1,17 +1,18 @@
 import sys
 
 from boundary.input_parser import parse_input
+from control.convert_use_case import ConvertUseCase
 
 
 def main(argv: list[str] | None = None) -> int:
     args = argv if argv is not None else sys.argv[1:]
     raw = args[0] if args else ""
 
-    result = parse_input(raw)
-    if isinstance(result, str):
-        print(result, file=sys.stderr)
+    outcome = ConvertUseCase(parse_input).execute(raw)
+    if outcome.kind == "error":
+        print(outcome.error_code, file=sys.stderr)
         return 1
-    if result is None:
+    if outcome.kind == "not_ready":
         return 1
 
     return 0

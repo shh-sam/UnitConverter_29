@@ -27,9 +27,9 @@ UnitConverter_29/
 │   ├── control/              # UseCase, ConfigLoad
 │   └── boundary/             # CLI, Parser, Formatter
 ├── tests/
-│   ├── entity/               # Track B — D-CNV-*, D-REG-*
+│   ├── entity/               # Track B — D-CNV-*, D-REG-* (+ conftest fixtures)
 │   ├── control/              # Track B — D-CFG-*
-│   ├── boundary/             # Track A — U-*
+│   ├── boundary/             # Track A — U-* (+ conftest run_boundary_cli)
 │   ├── golden/               # Golden Master 기준 파일 (*.approved.txt)
 │   └── _approval.py          # assert_matches_golden() 헬퍼
 ├── pyproject.toml
@@ -142,10 +142,14 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
 | 008 | [`008-green-minimal-u-in-01-prompt.md`](Prompting/008-green-minimal-u-in-01-prompt.md) | `/green-minimal` — U-IN-01 boundary GREEN·E001·subprocess PYTHONPATH · session-export |
 | 009 | [`009-green-minimal-u-in-02-prompt.md`](Prompting/009-green-minimal-u-in-02-prompt.md) | `/green-minimal` — U-IN-02 boundary GREEN·E002·콜론 검증 · session-export |
 | 010 | [`010-golden-master-approval-test-prompt.md`](Prompting/010-golden-master-approval-test-prompt.md) | Golden Master — PASS 4건 approval test·`tests/_approval.py` · session-export |
+| 011 | [`011-refactor-smell-scan-prompt.md`](Prompting/011-refactor-smell-scan-prompt.md) | `/refactor-smell` — ECB P0/P1/P2 스멜 스캔·ConvertUseCase 후보 · session-export |
+| 012 | [`012-refactor-safe-control-layer-prompt.md`](Prompting/012-refactor-safe-control-layer-prompt.md) | `/refactor-safe` — ConvertUseCase 추출·ECB control 스켈레톤 · session-export |
+| 013 | [`013-refactor-safe-entity-registry-fixture-prompt.md`](Prompting/013-refactor-safe-entity-registry-fixture-prompt.md) | `/refactor-safe` — entity `meter_feet_registry` fixture·D-CNV Given DRY · session-export |
+| 014 | [`014-refactor-safe-boundary-cli-helper-prompt.md`](Prompting/014-refactor-safe-boundary-cli-helper-prompt.md) | `/refactor-safe` — boundary `run_boundary_cli` helper·U-IN subprocess DRY · session-export |
 
 ### 5. 회고 및 발표
 
-- **회고 보고서**: [`Report/010-golden-master-approval-test-report.md`](Report/010-golden-master-approval-test-report.md)
+- **회고 보고서**: [`Report/014-refactor-safe-boundary-cli-helper-report.md`](Report/014-refactor-safe-boundary-cli-helper-report.md)
 - **Transcript**: [`Prompting/`](Prompting/) (위 표 참조)
 - 실습 체크리스트: 목표 달성도 · AI 활용 · TDD 진행 · 다음 단계는 회고 보고서에 기록
 
@@ -167,4 +171,4 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
    - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
    - TC를 추가해보면서 개선에 미친 영향, TC 작성 팁
    - 클린코드와 리팩토링에서 느낀 장점과 어려운점
-   - 회고 보고서: [`Report/010-golden-master-approval-test-report.md`](Report/010-golden-master-approval-test-report.md) · `/session-export`
+   - 회고 보고서: [`Report/014-refactor-safe-boundary-cli-helper-report.md`](Report/014-refactor-safe-boundary-cli-helper-report.md) · `/session-export`
