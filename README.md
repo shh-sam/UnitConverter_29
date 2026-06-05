@@ -138,10 +138,11 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
 | 006 | [`006-green-minimal-d-cnv-01-prompt.md`](Prompting/006-green-minimal-d-cnv-01-prompt.md) | `/green-minimal` — D-CNV-01 entity GREEN·import shadowing 해소 · session-export |
 | 007 | [`007-green-minimal-d-cnv-02-prompt.md`](Prompting/007-green-minimal-d-cnv-02-prompt.md) | `/green-minimal` — D-CNV-02 meter→feet GREEN·Converter 본문 비수정(OCP) · session-export |
 | 008 | [`008-green-minimal-u-in-01-prompt.md`](Prompting/008-green-minimal-u-in-01-prompt.md) | `/green-minimal` — U-IN-01 boundary GREEN·E001·subprocess PYTHONPATH · session-export |
+| 009 | [`009-green-minimal-u-in-02-prompt.md`](Prompting/009-green-minimal-u-in-02-prompt.md) | `/green-minimal` — U-IN-02 boundary GREEN·E002·콜론 검증 · session-export |
 
 ### 5. 회고 및 발표
 
-- **회고 보고서**: [`Report/008-green-minimal-u-in-01-report.md`](Report/008-green-minimal-u-in-01-report.md)
+- **회고 보고서**: [`Report/009-green-minimal-u-in-02-report.md`](Report/009-green-minimal-u-in-02-report.md)
 - **Transcript**: [`Prompting/`](Prompting/) (위 표 참조)
 - 실습 체크리스트: 목표 달성도 · AI 활용 · TDD 진행 · 다음 단계는 회고 보고서에 기록
 
@@ -163,4 +164,4 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
    - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
    - TC를 추가해보면서 개선에 미친 영향, TC 작성 팁
    - 클린코드와 리팩토링에서 느낀 장점과 어려운점
-   - 회고 보고서: [`Report/008-green-minimal-u-in-01-report.md`](Report/008-green-minimal-u-in-01-report.md) · `/session-export`
+   - 회고 보고서: [`Report/009-green-minimal-u-in-02-report.md`](Report/009-green-minimal-u-in-02-report.md) · `/session-export`
