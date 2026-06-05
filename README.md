@@ -134,10 +134,11 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
 | 002 | [`002-ecb-harness-rules-alignment.md`](Prompting/002-ecb-harness-rules-alignment.md) | ECB Harness · `.cursorrules` 리뷰·정렬 · session-export |
 | 003 | [`003-dual-track-red-test-plan-prompt.md`](Prompting/003-dual-track-red-test-plan-prompt.md) | Dual-Track RED 설계표 (D-CNV-01, U-IN-01~02) · session-export |
 | 004 | [`004-magic-square-ssot-cleanup-prompt.md`](Prompting/004-magic-square-ssot-cleanup-prompt.md) | Magic Square SSOT 혼입 조사·003 문서 UnitConverter 정리 · session-export |
+| 005 | [`005-dual-track-red-skeleton-prompt.md`](Prompting/005-dual-track-red-skeleton-prompt.md) | `/red-skeleton` — D-CNV-01, U-IN-01~02 스켈레톤·pytest 3 failed · session-export |
 
 ### 5. 회고 및 발표
 
-- **회고 보고서**: [`Report/004-magic-square-ssot-cleanup-report.md`](Report/004-magic-square-ssot-cleanup-report.md)
+- **회고 보고서**: [`Report/005-dual-track-red-skeleton-report.md`](Report/005-dual-track-red-skeleton-report.md)
 - **Transcript**: [`Prompting/`](Prompting/) (위 표 참조)
 - 실습 체크리스트: 목표 달성도 · AI 활용 · TDD 진행 · 다음 단계는 회고 보고서에 기록
 
@@ -159,4 +160,4 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
    - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
    - TC를 추가해보면서 개선에 미친 영향, TC 작성 팁
    - 클린코드와 리팩토링에서 느낀 장점과 어려운점
-   - 회고 보고서: [`Report/004-magic-square-ssot-cleanup-report.md`](Report/004-magic-square-ssot-cleanup-report.md) · `/session-export`
+   - 회고 보고서: [`Report/005-dual-track-red-skeleton-report.md`](Report/005-dual-track-red-skeleton-report.md) · `/session-export`
