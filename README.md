@@ -29,7 +29,9 @@ UnitConverter_29/
 ├── tests/
 │   ├── entity/               # Track B — D-CNV-*, D-REG-*
 │   ├── control/              # Track B — D-CFG-*
-│   └── boundary/             # Track A — U-*
+│   ├── boundary/             # Track A — U-*
+│   ├── golden/               # Golden Master 기준 파일 (*.approved.txt)
+│   └── _approval.py          # assert_matches_golden() 헬퍼
 ├── pyproject.toml
 ├── docs/PRD.md
 ├── Report/
@@ -135,10 +137,15 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
 | 003 | [`003-dual-track-red-test-plan-prompt.md`](Prompting/003-dual-track-red-test-plan-prompt.md) | Dual-Track RED 설계표 (D-CNV-01, U-IN-01~02) · session-export |
 | 004 | [`004-magic-square-ssot-cleanup-prompt.md`](Prompting/004-magic-square-ssot-cleanup-prompt.md) | Magic Square SSOT 혼입 조사·003 문서 UnitConverter 정리 · session-export |
 | 005 | [`005-dual-track-red-skeleton-prompt.md`](Prompting/005-dual-track-red-skeleton-prompt.md) | `/red-skeleton` — D-CNV-01, U-IN-01~02 스켈레톤·pytest 3 failed · session-export |
+| 006 | [`006-green-minimal-d-cnv-01-prompt.md`](Prompting/006-green-minimal-d-cnv-01-prompt.md) | `/green-minimal` — D-CNV-01 entity GREEN·import shadowing 해소 · session-export |
+| 007 | [`007-green-minimal-d-cnv-02-prompt.md`](Prompting/007-green-minimal-d-cnv-02-prompt.md) | `/green-minimal` — D-CNV-02 meter→feet GREEN·Converter 본문 비수정(OCP) · session-export |
+| 008 | [`008-green-minimal-u-in-01-prompt.md`](Prompting/008-green-minimal-u-in-01-prompt.md) | `/green-minimal` — U-IN-01 boundary GREEN·E001·subprocess PYTHONPATH · session-export |
+| 009 | [`009-green-minimal-u-in-02-prompt.md`](Prompting/009-green-minimal-u-in-02-prompt.md) | `/green-minimal` — U-IN-02 boundary GREEN·E002·콜론 검증 · session-export |
+| 010 | [`010-golden-master-approval-test-prompt.md`](Prompting/010-golden-master-approval-test-prompt.md) | Golden Master — PASS 4건 approval test·`tests/_approval.py` · session-export |
 
 ### 5. 회고 및 발표
 
-- **회고 보고서**: [`Report/005-dual-track-red-skeleton-report.md`](Report/005-dual-track-red-skeleton-report.md)
+- **회고 보고서**: [`Report/010-golden-master-approval-test-report.md`](Report/010-golden-master-approval-test-report.md)
 - **Transcript**: [`Prompting/`](Prompting/) (위 표 참조)
 - 실습 체크리스트: 목표 달성도 · AI 활용 · TDD 진행 · 다음 단계는 회고 보고서에 기록
 
@@ -160,4 +167,4 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
    - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
    - TC를 추가해보면서 개선에 미친 영향, TC 작성 팁
    - 클린코드와 리팩토링에서 느낀 장점과 어려운점
-   - 회고 보고서: [`Report/005-dual-track-red-skeleton-report.md`](Report/005-dual-track-red-skeleton-report.md) · `/session-export`
+   - 회고 보고서: [`Report/010-golden-master-approval-test-report.md`](Report/010-golden-master-approval-test-report.md) · `/session-export`

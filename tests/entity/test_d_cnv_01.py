@@ -2,11 +2,26 @@
 
 import pytest
 
+from tests._approval import assert_matches_golden
+
+from entity.constants import METER_TO_FEET
+from entity.converter import Converter
+from entity.length_unit import LengthUnit
+from entity.registry import UnitRegistry
+
 
 @pytest.mark.d_cnv_01
 def test_d_cnv_01_feet_to_meter():
     """D-CNV-01: 1 feet → 0.3048 m (±ε)."""
     # Given: Registry with feet and meter; input value 1 feet
+    registry = UnitRegistry()
+    registry.register(LengthUnit("meter", 1.0))
+    registry.register(LengthUnit("feet", 1.0 / METER_TO_FEET))
+    converter = Converter(registry)
+
     # When: Converter.convert("feet", "meter", 1)
+    result = converter.convert("feet", "meter", 1)
+
     # Then: 0.3048 m (±ε)
-    pytest.fail("RED: D-CNV-01 — 구현 없음, 의도적 실패")
+    assert result == pytest.approx(0.3048)
+    assert_matches_golden(f"{result:.5f}", "d_cnv_01_feet_to_meter.approved.txt")
