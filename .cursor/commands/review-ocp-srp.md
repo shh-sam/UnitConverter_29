@@ -24,10 +24,10 @@ Phase: review | Scope: OCP/SRP·C2C | Track: Logic+UI
 
 ## 절차 (읽기 전용)
 
-1. **범위 스캔** — `UnitConverter.py` (레거시) · `unit_converter/` · `tests/test_cli.py` · `tests/test_converter.py`
-2. **OCP 점검** — if/elif 단위 분기 잔존 · 신규 단위 추가 시 converter 비수정 여부 (NFR-01)
-3. **SRP 점검** — Parser / Registry / Converter / Formatter 분리 (NFR-02)
-4. **C2C 점검** — FR-01~05, NFR-01~02 각각 대응 Test ID 존재·적합성
+1. **범위 스캔** — `UnitConverter.py` (레거시) · `src/` · `tests/entity/` · `tests/control/` · `tests/boundary/`
+2. **OCP 점검** — if/elif 단위 분기 · ECB import 방향 · converter 본문 비수정 (NFR-01)
+3. **SRP 점검** — entity/control/boundary 분리 (NFR-02)
+4. **C2C 점검** — FR-01~05, NFR-01~02, E001~E007 ↔ Test ID
 5. **SSOT 점검** — 변환 비율 상수가 `units.json` 또는 constants에만 있는지
 6. **표만 출력** — 위반 항목 + 수정 방향. 코드·commit **금지**.
 
@@ -41,17 +41,17 @@ Phase: review | Scope: OCP/SRP·C2C | Track: Logic+UI
 |------|------|------|
 | 신규 단위 | `LengthUnit` + `registry.register()` (또는 `units.json` 1줄) | `converter.py` 등 기존 변환기 **본문 수정** |
 | 분기 | registry lookup | if/elif **단위명 하드코딩** |
+| import | boundary → control → entity | entity→boundary, control→boundary |
 
-### 2. SRP (NFR-02)
+### 2. SRP (NFR-02) — ECB
 
 | 컴포넌트 | 책임 | 기대 위치 |
 |----------|------|-----------|
-| Parser | `unit:value` 파싱 | `app/input_parser.py` |
-| Registry | 단위 등록·조회 | `domain/unit_registry.py` |
-| Converter | meter 기준 변환 | `domain/converter.py` |
-| Formatter | CLI 출력 | `app/output_formatter.py` |
+| LengthUnit, Registry, Converter | 도메인 변환 | `src/entity/` |
+| UseCase, ConfigLoad | 유스케이스 | `src/control/` |
+| CLI, Parser, Formatter | I/O | `src/boundary/` |
 
-**위반:** 한 모듈에 파싱+변환+출력 혼재 · `UnitConverter.py` 레거시에 신규 로직 추가
+**위반:** 한 모듈에 파싱+변환+출력 혼재 · ECB 역방향 import · `UnitConverter.py`에 신규 로직
 
 ### 3. C2C — FR/NFR ↔ Test ID
 
@@ -59,7 +59,7 @@ Phase: review | Scope: OCP/SRP·C2C | Track: Logic+UI
 |---------|------|--------------|----------|
 | FR-01 | `meter:2.5` 파싱 | U-IN-* / domain 파서 | PASS / GAP / N/A |
 | FR-02 | 전 단위 출력 | D-CNV-01~03, U-OUT-01 | … |
-| FR-03 | 미지 단위 | 미등록 케이스 | … |
+| FR-03 | 미지 단위 | E004 / 미등록 케이스 | … |
 | FR-04 | 음수 거부 | U-IN-03 | … |
 | FR-05 | 잘못된 형식 | U-IN-01, U-IN-02 | … |
 | NFR-01 | OCP | D-REG-01 등 | … |
@@ -76,8 +76,8 @@ Phase: review | Scope: OCP/SRP·C2C | Track: Logic+UI
 
 | Track | 규칙 |
 |-------|------|
-| Logic (`test_converter.py`) | Domain Mock **금지** |
-| UI (`test_cli.py`) | Domain Mock **허용** |
+| Logic (`tests/entity/`, `tests/control/`) | entity/control Mock **금지** |
+| UI (`tests/boundary/`) | control Mock **허용** |
 
 ---
 
@@ -110,7 +110,8 @@ Phase: review | Scope: OCP/SRP·C2C | Track: Logic+UI
 | SRP (4컴포넌트 분리) | PASS / FAIL | |
 | C2C (FR-01~05, NFR-01~02) | PASS / GAP | |
 | 비율 SSOT | PASS / FAIL | |
-| Logic Track Domain Mock | PASS / FAIL / N/A | |
+| Logic Track entity/control Mock | PASS / FAIL / N/A | |
+| ECB import 방향 | PASS / FAIL | |
 
 ---
 

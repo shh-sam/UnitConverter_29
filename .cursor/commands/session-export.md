@@ -18,9 +18,15 @@ Phase: export | Scope: session-report | Track: Documentation
 
 | 폴더 | 파일 패턴 | 설명 |
 |------|-----------|------|
-| `Report/` | `NNN-회고-보고서.md` | 실습 회고·달성도·AI 활용 요약 (한국어) |
-| `Prompting/` | `NNN-<주제-slug>.md` | Agent 대화 Transcript (번호·시간순) |
+| `Report/` | `NNN-<주제-slug>-report.md` | 실습 회고·달성도·AI 활용 요약 (한국어) |
+| `Prompting/` | `NNN-<주제-slug>-prompt.md` | Agent 대화 Transcript (번호·시간순) |
 | `README.md` | — | Commands·폴더 구조·회고 섹션 갱신 |
+
+**Report ↔ Prompting 세트 규칙**
+
+- 동일 Export 실행에서 생성되는 Report·Prompting은 **같은 `NNN`과 같은 `<주제-slug>`** 를 공유한다.
+- Prompting 쪽에 `-prompt` postfix를 붙여 Transcript임을 구분한다. Report는 `-report` postfix로 짝을 맞춘다.
+- 예: `Report/002-ecb-harness-rules-alignment-report.md` ↔ `Prompting/002-ecb-harness-rules-alignment-prompt.md`
 
 번호 `NNN`은 **001부터** 3자리 zero-padding. **기존 파일이 있으면** 최대 번호 다음부터 이어서 매긴다.
 
@@ -38,7 +44,7 @@ Phase: export | Scope: session-report | Track: Documentation
 |------|------|
 | 별도 지정 없음 | **현재 대화 세션** 1개만 |
 | Session ID 지정 | 해당 ID의 Transcript 1개만 |
-| 여러 ID 나열 | 나열된 세션만 (각각 별도 `Prompting/NNN-*.md`) |
+| 여러 ID 나열 | 나열된 세션만 (각각 별도 `Prompting/NNN-*-prompt.md`) |
 
 **하지 않는 것**
 
@@ -54,14 +60,21 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 - 대상 Session ID의 `.jsonl` **1개**(또는 명시된 개수만) 읽기 전용으로 열기.
 - 현재 세션 ID는 Cursor가 제공하는 transcript 경로·대화 컨텍스트에서 확인한다.
 
-### 2. `Prompting/` Export
+### 2. `<주제-slug>` 결정 (Report·Prompting 공통)
+
+Export **시작 시** 첫 user 메시지의 `<user_query>` 본문에서 `<주제-slug>`를 한 번만 정한다. Report·Prompting **모두 동일 slug**를 사용한다.
+
+- kebab-case 영문 또는 짧은 한글 (공백·특수문자 제거, 40자 이내)
+- 예: `venv-setup`, `gitignore-commit`, `ecb-harness-rules-alignment`
+
+### 3. `Prompting/` Export
 
 **대상 세션**의 Transcript를 **읽기 쉬운 Markdown**으로 변환해 저장한다. (이번 실행당 1세션 = 1파일이 일반적)
 
-**파일명**: `Prompting/NNN-<주제-slug>.md`
+**파일명**: `Prompting/NNN-<주제-slug>-prompt.md`
 
-- `<주제-slug>`: 첫 user 메시지에서 `<user_query>` 본문을 kebab-case 영문 또는 짧은 한글 (공백·특수문자 제거, 40자 이내).
-- 예: `001-venv-setup.md`, `002-gitignore-commit.md`, `003-cursor-commands.md`
+- `<주제-slug>`: §2에서 결정한 값과 **동일**.
+- 예: `001-venv-setup-prompt.md`, `002-gitignore-commit-prompt.md`, `003-cursor-commands-prompt.md`
 
 **본문 형식**:
 
@@ -98,9 +111,11 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 | 중복 Export | 동일 Session ID가 이미 `Prompting/`에 있으면 **덮어쓰지 않고** 스킵 (또는 사용자가 갱신 요청 시에만 해당 파일 업데이트) |
 | 범위 | **요청 세션 외** Transcript는 Export하지 않음 |
 
-### 3. `Report/` 보고서 생성
+### 4. `Report/` 보고서 생성
 
-**파일명**: `Report/NNN-회고-보고서.md` (보통 `001`; 재실행 시 `002` …)
+**파일명**: `Report/NNN-<주제-slug>-report.md` (§2 slug와 **동일**; 보통 `001`; 재실행 시 `002` …)
+
+- 예: `001-venv-setup-report.md`, `002-ecb-harness-rules-alignment-report.md`
 
 `README.md` **「5. 회고 및 발표」** 항목을 충실히 반영한다:
 
@@ -109,7 +124,8 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 
 - **작성일**: YYYY-MM-DD
 - **프로젝트**: UnitConverter_29
-- **이번 Export 세션**: `<session-id>` → `Prompting/NNN-….md`
+- **이번 Export 세션**: `<session-id>` → `Prompting/NNN-<주제-slug>-prompt.md`
+- **Report 짝**: `Report/NNN-<주제-slug>-report.md`
 - **Prompting 누적**: N개 (`Prompting/` 전체 목록 참조)
 
 ## 1. 실습 목표와 달성도
@@ -126,7 +142,7 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 
 | 순번 | Prompting | 활용 Command/Skill | 도움이 된 점 | 한계 |
 |------|-----------|-------------------|-------------|------|
-| 001 | [001-…](Prompting/001-….md) | … | … | … |
+| 001 | [001-…-prompt](Prompting/001-…-prompt.md) | … | … | … |
 
 ## 3. TDD·테스트 (Dual-Track)
 
@@ -146,15 +162,15 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 
 **보고서 작성 시 반드시**
 
-- 저장소 상태 스캔: `unit_converter/`, `tests/`, `pytest` 결과
+- 저장소 상태 스캔: `src/`, `tests/entity|control|boundary/`, `pytest` 결과
 - `Prompting/` 파일 목록과 상호 링크
 - 추측이 아닌 **Transcript·코드·pytest 근거** 기반 서술
 
-### 4. `README.md` 갱신
+### 5. `README.md` 갱신
 
 기존 내용은 유지하고, 아래 섹션을 **추가 또는 갱신**한다 (중복 제거).
 
-#### 4-a. Cursor Commands 표
+#### 5-a. Cursor Commands 표
 
 | Command | 파일 | 용도 |
 |---------|------|------|
@@ -166,25 +182,25 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 | `/review-ocp-srp` | `.cursor/commands/review-ocp-srp.md` | OCP/SRP·C2C 리뷰 |
 | `/session-export` | `.cursor/commands/session-export.md` | **회고 보고서·Transcript Export** |
 
-#### 4-b. 산출물 폴더
+#### 5-b. 산출물 폴더
 
 ```markdown
 ### 산출물 폴더
 
 | 폴더 | 내용 |
 |------|------|
-| `Report/` | 실습 회고 보고서 (`NNN-회고-보고서.md`) |
-| `Prompting/` | Cursor Agent 대화 Transcript Export (`NNN-*.md`) |
+| `Report/` | 실습 회고 보고서 (`NNN-<주제-slug>-report.md`) |
+| `Prompting/` | Cursor Agent Transcript Export (`NNN-<주제-slug>-prompt.md`) — Report와 **같은 NNN·slug** |
 
 회고 정리: 채팅에서 `/session-export` 실행.
 ```
 
-#### 4-c. 「5. 회고 및 발표」
+#### 5-c. 「5. 회고 및 발표」
 
-- `Report/` 최신 보고서 링크
-- `Prompting/` Transcript 목록 (번호·파일명·한 줄 요약) 테이블
+- `Report/` 최신 보고서 링크 (`NNN-<주제-slug>-report.md`)
+- `Prompting/` Transcript 목록 (번호·파일명·한 줄 요약) — Report와 **같은 NNN·slug** + `-prompt` 테이블
 
-### 5. 완료 보고
+### 6. 완료 보고
 
 채팅에 아래 형식으로 보고한다:
 
@@ -192,8 +208,8 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 ## Session Export 완료
 
 - **Export 대상**: 현재 세션 `<session-id>` (또는 사용자 지정 세션)
-- **Report**: Report/001-회고-보고서.md
-- **Prompting**: 이번 1건 → `Prompting/NNN-<주제>.md` (누적 N개)
+- **Report**: `Report/NNN-<주제-slug>-report.md`
+- **Prompting**: 이번 1건 → `Prompting/NNN-<주제-slug>-prompt.md` (Report와 **동일 NNN·slug** 세트, 누적 N개)
 - **README.md**: Commands·산출물 폴더·회고 링크 갱신
 - **pytest**: (실행했다면) passed/failed 요약
 ```
