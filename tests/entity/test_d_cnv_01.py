@@ -2,6 +2,8 @@
 
 import pytest
 
+from tests._approval import assert_matches_golden
+
 from entity.constants import METER_TO_FEET
 from entity.converter import Converter
 from entity.length_unit import LengthUnit
@@ -22,3 +24,4 @@ def test_d_cnv_01_feet_to_meter():
 
     # Then: 0.3048 m (±ε)
     assert result == pytest.approx(0.3048)
+    assert_matches_golden(f"{result:.5f}", "d_cnv_01_feet_to_meter.approved.txt")

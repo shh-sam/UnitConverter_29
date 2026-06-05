@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from tests._approval import assert_matches_golden
+
 _SRC = str(Path(__file__).resolve().parent.parent.parent / "src")
 
 
@@ -23,6 +25,6 @@ def test_u_in_01_empty_input():
     )
 
     # Then: stderr E001, exit≠0, stdout has no conversion lines
-    assert "E001" in result.stderr
+    assert_matches_golden(result.stderr, "u_in_01_empty.approved.txt")
     assert result.returncode != 0
     assert result.stdout.strip() == ""

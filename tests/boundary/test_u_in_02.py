@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from tests._approval import assert_matches_golden
+
 _SRC = str(Path(__file__).resolve().parent.parent.parent / "src")
 
 
@@ -23,6 +25,6 @@ def test_u_in_02_missing_colon():
     )
 
     # Then: stderr E002, exit≠0, stdout has no conversion lines
-    assert "E002" in result.stderr
+    assert_matches_golden(result.stderr, "u_in_02_missing_colon.approved.txt")
     assert result.returncode != 0
     assert result.stdout.strip() == ""
