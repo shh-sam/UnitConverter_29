@@ -1,48 +1,114 @@
-# UnitConverter_29 — Cursor Rules (SSOT: README.md + 프로젝트가이드 PDF)
+# UnitConverter_29 — Cursor Rules (헌법)
+
+## SSOT 계층 (충돌 시 위 우선)
+
+1. `.cursorrules` — 원칙·금지·게이트
+2. `README.md` · `docs/PRD.md` — 요구·R-G-I-O
+3. `.cursor/skills/unit-converter-tdd/reference.md` — FR/NFR/EXT · Test ID · E00x
+4. `.cursor/skills/unit-converter-tdd/SKILL.md` — RED/GREEN/REFACTOR 절차
+5. `.cursor/commands/` — Phase별 실행 프롬프트
 
 ## 도메인
-- 길이 단위 CLI. 입력 형식: `unit:value` (예: `meter:2.5`)
+
+- 길이 단위 CLI. 입력: `unit:value` (예: `meter:2.5`)
 - 기본 단위: meter, feet, yard
 - 변환 비율 SSOT: 1m = 3.28084 ft = 1.09361 yd (feet↔yard는 meter 경유)
-- P1 추가: `units.json` 외부 설정, 동적 등록(`cubit=0.4572m`), `--format json|csv|table`
+- P1: `units.json`, 동적 등록(`cubit=0.4572m`), `--format json|csv|table`
 
-## 아키텍처 (OCP / SRP)
+## 아키텍처 (ECB · OCP / SRP)
+
 ```
-unit_converter/
-  domain/          length_unit, unit_registry, converter
-  infrastructure/  config_loader
-  app/             input_parser, output_formatter
-  cli.py           진입점: python -m unit_converter "meter:2.5"
+src/
+  entity/     LengthUnit, UnitRegistry, Converter, ConfigError
+  control/    ConvertUseCase, RegisterUseCase, ConfigLoad
+  boundary/   CLI 진입, InputParser, OutputFormatter, ConfigLoader
 ```
-- OCP: 새 단위 = `LengthUnit` 구현 + `registry.register()` — 변환기 코드 비수정
-- SRP: Parser / Registry / Converter / Formatter 각각 단일 책임
+
+- **의존 방향**: `boundary → control → entity` (단방향). 역방향·횡단 import 금지.
+- **entity**: control/boundary import 금지. stdlib·동일 레이어 entity만.
+- **control**: entity만 import. boundary import 금지.
+- **boundary**: control(및 entity 간접)만 import.
+- **OCP**: 새 단위 = `LengthUnit` + `registry.register()` (또는 `units.json` 1줄) — 변환기 본문 비수정 (NFR-01)
+- **SRP** (NFR-02): Parser·Formatter → boundary / Registry·Converter → entity / 유스케이스 → control
+
+## 입출력 · 오류 계약 (E001~E007)
+
+| 코드 | 조건 (Given) | Then | Test ID |
+|------|--------------|------|---------|
+| E001 | `""` | 형식 오류, 변환 없음 | U-IN-01 |
+| E002 | `meter` (콜론 없음) | 형식 오류 | U-IN-02 |
+| E003 | `meter:-1` | 음수 거부 | U-IN-03 |
+| E004 | `cubit:1` (미등록) | 미지 단위 | FR-03 |
+| E005 | `abc` 등 단위·형식 불명 | 형식 오류 | FR-05 |
+| E006 | 깨진 `units.json` | ConfigError, 잘못된 숫자 출력 금지 | D-CFG-01 |
+| E007 | `meter:abc` (값 비숫자) | 형식/값 오류 | FR-05 |
+
+- **성공**: 등록된 전 단위 변환 목록 (P0 텍스트 줄 / P1 `--format`)
+- **오류**: stderr에 `E00x` 포함 메시지, exit code ≠ 0, stdout에 변환 결과 없음
 
 ## Dual-Track TDD
-| Track | ID 접두 | 테스트 파일 | 범위 |
-|-------|---------|-------------|------|
-| A (UI/Boundary) | U-* | tests/test_cli.py | CLI 입출력, 형식/음수/미지단위, --format |
-| B (Domain/Logic) | D-* | tests/test_converter.py | to_meter, convert_all, register |
 
-## TDD 사이클 (RED → GREEN → REFACTOR)
-- **RED**: 구현 금지. `pytest.fail("RED: [Test ID]")` 허용. skip/xfail/assert 완화 금지
-- **GREEN**: 선택 RED 1묶음만 최소 구현. **1 RED = 1 커밋**
-- **REFACTOR**: 전체 `pytest` PASS 후, Change Budget(파일 ≤ 3) 내 구조 개선
-- 비율 상수 하드코딩 금지 → `units.json` 또는 `constants` SSOT
+| Track | Layer | ID | 테스트 | 범위 | Mock |
+|-------|-------|-----|--------|------|------|
+| A (UI) | boundary | U-* | `tests/boundary/` | CLI·E00x·출력·--format | control **허용** |
+| B (Logic) | entity | D-CNV-*, D-REG-* | `tests/entity/` | to_meter, convert, register | **금지** |
+| B (Logic) | control | D-CFG-* 등 | `tests/control/` | 설정 로드·유스케이스 | entity/control **금지** |
+
+- Logic RED: `src/boundary/` 수정 금지
+- UI RED: `src/entity/` · `src/control/` 직접 수정 금지
+
+## TDD 사이클 · 편집 게이트
+
+| Phase | 편집 허용 | pytest 게이트 |
+|-------|-----------|---------------|
+| **RED** | `tests/**` only | 대상 1건 **FAIL** (`pytest.fail` 허용) |
+| **GREEN** | 이번 RED 1묶음 대응 `src/**` | 대상 **PASS** → Track 디렉터리 PASS |
+| **REFACTOR** | Budget(파일 ≤ 3) 내 `src/**` | `pytest tests/ -v` **전부 PASS** |
+| **REVIEW** | 수정 금지 | 실행·수정 금지 (`/review-ocp-srp`) |
+
+- skip · xfail · assert 완화 **금지**
+- **GREEN**: RED 1묶음만. **1 RED = 1 커밋** (사용자 요청 시)
+- 비율·단위 목록 하드코딩 금지 → `units.json` 또는 constants SSOT
+
+### Test/Review Loop (pytest)
+
+```bash
+# RED
+python -m pytest tests/<layer>/test_<id>.py::<func> -v
+
+# GREEN — Track 회귀
+python -m pytest tests/entity/ -v    # Logic
+python -m pytest tests/boundary/ -v  # UI
+
+# REFACTOR / Review 전제
+python -m pytest tests/ -v
+```
 
 ## C2C (Concept-to-Code Traceability)
-1. PRD 판단 항목만 To-Do로 변환
+
+1. PRD 판단 항목만 To-Do
 2. 1 To-Do : 1 Test Case (U-* 또는 D-*)
-3. RED 먼저 → FAIL 확인 → GREEN
+3. RED → FAIL 확인 → GREEN
+
+## Hook 연동 (원칙 — Hook은 강제)
+
+- Golden Master(`tests/**/golden/**`) 변경: **사용자 명시 승인** 없이 금지 (Hook: `afterFileEdit` 등)
+- RED 중 `src/**` 편집: Rule 금지 = Hook 차단 대상
+- Rule = **왜**, Hook = **어떻게 막는지** — 중복 문장 지양
 
 ## AI 행동 규칙
-- **언어**: 한국어로 응답
-- **TDD 작업 시 선언**: Phase(RED/GREEN/REFACTOR) · Layer(domain/app/infrastructure) · Track(A/B)
-- **커밋**: 사용자 명시 요청 시에만 (`git commit` 자동 실행 금지)
-- **범위**: 요청된 Test ID·파일만 수정. 미요청 리팩터·파일 생성 금지
-- **검증**: GREEN/REFACTOR 후 `pytest` 실행 결과 보고
+
+- **언어**: 한국어
+- **TDD 선언**: Phase · Layer(`entity`|`control`|`boundary`) · Track(`UI`|`Logic`)
+- **커밋**: 사용자 명시 요청 시에만
+- **범위**: 요청 Test ID·파일만. 미요청 리팩터·파일 생성 금지
+- **검증**: GREEN/REFACTOR 후 pytest 결과 보고
 
 ## 금지 사항
-- RED 단계에서 프로덕션 구현 코드 작성
+
+- RED 단계에서 `src/**` 프로덕션 코드 작성
 - 테스트 skip/xfail로 RED 우회
-- `UnitConverter.py` 레거시에 신규 로직 추가 (신규는 `unit_converter/` 패키지)
+- `UnitConverter.py` 레거시에 신규 로직 (신규는 `src/` ECB만)
+- entity → control/boundary import · control → boundary import
+- Logic Track에서 entity/control Mock
 - SSOT 없는 변환 비율·단위 목록 하드코딩

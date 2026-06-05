@@ -23,7 +23,7 @@ Phase: green | Test ID: {{test_id}}
 
 1. **선언** — Phase · Layer · Track · 대상 Test ID 1묶음.
 2. **RED 재확인** — 대상 테스트가 **FAIL**인지 pytest로 확인 (`pytest.fail` / ImportError 등).
-3. **최소 구현** — `unit_converter/`에 통과하는 코드만 추가·수정.
+3. **최소 구현** — `src/<layer>/`에 통과하는 코드만 추가·수정.
    - **하드코딩·매직넘버 금지** — `units.json` 또는 constants SSOT
    - **OCP**: registry 확장 우선, converter 본문 수정 최소화
    - **이번 RED 외 Test ID 동시 해결 금지**
@@ -37,13 +37,13 @@ Phase: green | Test ID: {{test_id}}
 
 ```bash
 # 1. RED 재확인 (FAIL 기대)
-python -m pytest tests/test_converter.py::test_d_cnv_01_feet_to_meter -v
+python -m pytest tests/entity/test_d_cnv_01.py::test_d_cnv_01_feet_to_meter -v
 
 # 2. GREEN 후 단일 PASS
-python -m pytest tests/test_converter.py::test_d_cnv_01_feet_to_meter -v
+python -m pytest tests/entity/test_d_cnv_01.py::test_d_cnv_01_feet_to_meter -v
 
 # 3. Track 회귀
-python -m pytest tests/test_converter.py -v
+python -m pytest tests/entity/ -v
 ```
 
 ---
@@ -54,12 +54,12 @@ python -m pytest tests/test_converter.py -v
 ## TDD 완료 보고
 
 - **Phase**: GREEN
-- **Track / Layer**: Logic · domain
+- **Track / Layer**: Logic · entity
 - **Test ID**: D-CNV-01
 - **pytest 결과**: `1 passed` (명령어 포함)
 - **변경 파일**:
-  - tests/test_converter.py (pytest.fail → assert)
-  - unit_converter/domain/converter.py
+  - tests/entity/test_d_cnv_01.py (pytest.fail → assert)
+  - src/entity/converter.py
 - **다음**: 다음 RED 후보 Test ID
 ```
 
@@ -73,7 +73,7 @@ python -m pytest tests/test_converter.py -v
 | **REFACTOR** | 구조 개선은 `/refactor-safe` |
 | **assert 완화·skip·xfail** | GREEN을 테스트 조작으로 달성 |
 | **비율·단위 하드코딩** | SSOT 위반 |
-| **`UnitConverter.py` 레거시에 신규 로직** | `unit_converter/` 패키지 사용 |
+| **`UnitConverter.py` 레거시에 신규 로직** | `src/` ECB 패키지 사용 |
 | **자동 git commit** | 사용자 명시 요청 시에만 |
 
 ---

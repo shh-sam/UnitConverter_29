@@ -3,7 +3,7 @@
 - **버전**: 0.1 (초안)
 - **작성일**: 2026-06-05
 - **SSOT**: `README.md` · 본 문서 · `.cursor/skills/unit-converter-tdd/reference.md`
-- **문제 정의**: [`Report/01.UnitConverter_ProblemDefinition_Report.md`](../Report/01.UnitConverter_ProblemDefinition_Report.md)
+- **문제 정의**: [`Report/001-UnitConverter_ProblemDefinition_Report.md`](../Report/001-UnitConverter_ProblemDefinition_Report.md)
 
 ---
 
@@ -45,7 +45,7 @@
 - 길이 단위 CLI: `meter`, `feet`, `yard`
 - 입력 형식 `unit:value` 파싱 및 검증
 - 전 단위 변환 출력
-- OCP·SRP 아키텍처 (`unit_converter/` 패키지)
+- OCP·SRP·ECB 아키텍처 (`src/entity`, `src/control`, `src/boundary`)
 - Dual-Track 테스트 (Track A: CLI · Track B: Domain)
 
 ### In Scope (P1 — 추가 요구)
@@ -105,18 +105,22 @@ feet ↔ yard: meter 경유 (직접 상수 하드코딩 금지)
 
 ---
 
-## 9. 아키텍처 (목표)
+## 9. 아키텍처 (목표 — ECB)
 
 ```
-unit_converter/
-  domain/          length_unit, unit_registry, converter
-  infrastructure/  config_loader
-  app/             input_parser, output_formatter
-  cli.py           진입점: python -m unit_converter "meter:2.5"
+src/
+  entity/          LengthUnit, UnitRegistry, Converter
+  control/         ConvertUseCase, ConfigLoad
+  boundary/        CLI, InputParser, OutputFormatter, ConfigLoader
 tests/
-  test_cli.py      Track A (U-*)
-  test_converter.py Track B (D-*)
+  entity/          Track B — D-CNV-*, D-REG-*
+  control/         Track B — D-CFG-*
+  boundary/        Track A — U-*
 ```
+
+- 의존 방향: `boundary → control → entity` (단방향)
+- 진입점 (구현 후): `python -m boundary "meter:2.5"`
+- 오류 계약 E001~E007: `.cursorrules` · `reference.md` SSOT
 
 ---
 
@@ -153,5 +157,5 @@ Dual-Track ID 상세: `.cursor/skills/unit-converter-tdd/reference.md`
 | 문서 | 용도 |
 |------|------|
 | `README.md` | 실행·실습 Activities |
-| `Report/01.UnitConverter_ProblemDefinition_Report.md` | Mom Test · R-G-I-O |
+| `Report/001-UnitConverter_ProblemDefinition_Report.md` | Mom Test · R-G-I-O |
 | `.cursorrules` | TDD·아키텍처 Agent 규칙 |

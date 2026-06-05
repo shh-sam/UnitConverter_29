@@ -13,7 +13,7 @@ Phase: red | Layer: {{layer}} | Track: {{track}}
 | 필드 | 값 |
 |------|-----|
 | **Phase** | `red` (고정) |
-| **Layer** | `domain` · `app` · `infrastructure` · `cli` 중 하나 |
+| **Layer** | `entity` · `control` · `boundary` 중 하나 |
 | **Track** | `Logic` (B, D-*) · `UI` (A, U-*) |
 | **이번 RED 묶음** | `{{test_ids}}` (예: D-CNV-01, FR-01) |
 
@@ -25,7 +25,7 @@ Phase: red | Layer: {{layer}} | Track: {{track}}
 |------|------|
 | **[P] 역할** | Dual-Track TDD 전문가. Phase: **RED** (설계만). |
 | **[C] 컨텍스트** | `@README.md` · `@.cursorrules` · `@UnitConverter.py` · `.cursor/skills/unit-converter-tdd/reference.md` |
-| **[T] 과제** | 이번 RED 묶음: `{{test_ids}}` — **설계표만** 출력. `tests/` · `unit_converter/` 파일 생성·수정 **금지**. |
+| **[T] 과제** | 이번 RED 묶음: `{{test_ids}}` — **설계표만** 출력. `tests/` · `src/` 파일 생성·수정 **금지**. |
 | **[F] 출력** | 아래 [보고 형식](#보고-형식) Markdown 표 4종 |
 
 ---
@@ -53,7 +53,7 @@ Phase: red | Layer: {{layer}} | Track: {{track}}
 
 ### 2. Track RED 설계표
 
-Track B → `tests/test_converter.py` · Track A → `tests/test_cli.py`
+Track B → `tests/entity/` · `tests/control/` · Track A → `tests/boundary/`
 
 | Test ID | Given | When | Then | Expected RED Failure |
 |---------|-------|------|------|----------------------|
@@ -63,7 +63,7 @@ Track B → `tests/test_converter.py` · Track A → `tests/test_cli.py`
 
 | Test ID | 파일 | 함수명 | pytest 명령 |
 |---------|------|--------|-------------|
-| D-CNV-01 | `tests/test_converter.py` | `test_d_cnv_01_…` | `python -m pytest tests/test_converter.py::test_d_cnv_01_… -v` |
+| D-CNV-01 | `tests/entity/` | `test_d_cnv_01_…` | `python -m pytest tests/entity/test_d_cnv_01.py::test_d_cnv_01_… -v` |
 
 ### 4. OCP/SRP 점검
 
@@ -80,7 +80,7 @@ Track B → `tests/test_converter.py` · Track A → `tests/test_cli.py`
 
 | 금지 | 이유 |
 |------|------|
-| **`tests/` · `unit_converter/` 파일 생성·수정** | 설계표 Command — 스켈레톤은 `/red-skeleton` |
+| **`tests/` · `src/` 파일 생성·수정** | 설계표 Command — 스켈레톤은 `/red-skeleton` |
 | **src 구현 · GREEN · REFACTOR** | RED 설계 단계만 |
 | **skip · xfail · assert 완화** | RED 우회 금지 |
 | **여러 Track 혼합 설계 (명시 없을 때)** | Track A/B 중 요청 Track만 |

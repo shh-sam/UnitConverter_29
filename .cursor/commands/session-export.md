@@ -146,7 +146,7 @@ Agent Transcript 원본 경로 (Cursor 프로젝트별):
 
 **보고서 작성 시 반드시**
 
-- 저장소 상태 스캔: `unit_converter/`, `tests/`, `pytest` 결과
+- 저장소 상태 스캔: `src/`, `tests/entity|control|boundary/`, `pytest` 결과
 - `Prompting/` 파일 목록과 상호 링크
 - 추측이 아닌 **Transcript·코드·pytest 근거** 기반 서술
 

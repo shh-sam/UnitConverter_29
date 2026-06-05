@@ -30,11 +30,10 @@ python -m pytest tests/ -v
 ## 절차 (읽기 전용)
 
 1. **전제 확인** — `pytest tests/ -v` 결과 기록.
-2. **스캔 범위** — `UnitConverter.py` (레거시) vs `unit_converter/` 패키지.
-   - `unit_converter/domain/` — length_unit, unit_registry, converter
-   - `unit_converter/app/` — input_parser, output_formatter
-   - `unit_converter/infrastructure/` — config_loader
-   - `unit_converter/cli.py`
+2. **스캔 범위** — `UnitConverter.py` (레거시) vs `src/` ECB 패키지.
+   - `src/entity/` — LengthUnit, UnitRegistry, Converter
+   - `src/control/` — UseCase, ConfigLoad
+   - `src/boundary/` — CLI, InputParser, OutputFormatter, ConfigLoader
 3. **스멜 탐지** — OCP/SRP·중복·거대 함수·if/elif 단위 분기·하드코딩·책임 혼재.
 4. **우선순위 부여** — P0 / P1 / P2.
 5. **Change Budget 내 후보만** — 파일 ≤ 3 · 클래스 ≤ 1 · 메서드 ≤ 3.

@@ -13,7 +13,7 @@
 
 | 문서 | 설명 |
 |------|------|
-| [`Report/01.UnitConverter_ProblemDefinition_Report.md`](Report/01.UnitConverter_ProblemDefinition_Report.md) | Mom Test 인터뷰 · R-G-I-O · 성공 기준 |
+| [`Report/001-UnitConverter_ProblemDefinition_Report.md`](Report/001-UnitConverter_ProblemDefinition_Report.md) | Mom Test 인터뷰 · R-G-I-O · 성공 기준 |
 | [`docs/PRD.md`](docs/PRD.md) | FR / NFR / EXT · C2C · 수용 기준 |
 | [`.cursor/skills/unit-converter-tdd/reference.md`](.cursor/skills/unit-converter-tdd/reference.md) | Test ID · Given/Then SSOT |
 
@@ -22,14 +22,15 @@
 ```
 UnitConverter_29/
 ├── UnitConverter.py          # 레거시 시드 (분석용)
-├── unit_converter/           # 목표 패키지 (TDD로 구현)
-│   ├── domain/
-│   ├── infrastructure/
-│   ├── app/
-│   └── cli.py
+├── src/                      # ECB 패키지 (TDD로 구현)
+│   ├── entity/               # Registry, Converter, LengthUnit
+│   ├── control/              # UseCase, ConfigLoad
+│   └── boundary/             # CLI, Parser, Formatter
 ├── tests/
-│   ├── test_cli.py           # Track A (U-*)
-│   └── test_converter.py     # Track B (D-*)
+│   ├── entity/               # Track B — D-CNV-*, D-REG-*
+│   ├── control/              # Track B — D-CFG-*
+│   └── boundary/             # Track A — U-*
+├── pyproject.toml
 ├── docs/PRD.md
 ├── Report/
 └── .cursor/                  # Commands · Skill · Rules
@@ -47,13 +48,13 @@ venv\Scripts\activate
 source venv/bin/activate
 
 # 의존성 (pytest 등)
-pip install -r requirements.txt
+pip install -e ".[dev]"
 
 # 레거시 실행
 python UnitConverter.py
 
-# 목표 CLI (구현 후)
-python -m unit_converter "meter:2.5"
+# 목표 CLI (구현 후 — boundary 진입점)
+python -m boundary "meter:2.5"
 
 # 테스트
 python -m pytest tests/ -v
@@ -120,16 +121,29 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
 | 폴더 | 내용 |
 |------|------|
 | `docs/` | PRD · 설계 문서 |
-| `Report/` | 문제 정의 · 실습 회고 보고서 |
+| `Report/` | 문제 정의 · 실습 회고 보고서 ([`002-ecb-harness-rules-alignment-report.md`](Report/002-ecb-harness-rules-alignment-report.md)) |
 | `Prompting/` | Cursor Agent 대화 Transcript Export |
 
 회고 정리: 채팅에서 `/session-export` 실행.
+
+### Prompting Transcript
+
+| # | 파일 | 요약 |
+|---|------|------|
+| 001 | [`001-mom-test-문제정의-prd.md`](Prompting/001-mom-test-문제정의-prd.md) | Mom Test · 문제 정의 · PRD 작성 |
+| 002 | [`002-ecb-harness-rules-alignment.md`](Prompting/002-ecb-harness-rules-alignment.md) | ECB Harness · `.cursorrules` 리뷰·정렬 · session-export |
+
+### 5. 회고 및 발표
+
+- **회고 보고서**: [`Report/002-ecb-harness-rules-alignment-report.md`](Report/002-ecb-harness-rules-alignment-report.md)
+- **Transcript**: [`Prompting/`](Prompting/) (위 표 참조)
+- 실습 체크리스트: 목표 달성도 · AI 활용 · TDD 진행 · 다음 단계는 회고 보고서에 기록
 
 ## 생성형AI를 활용한 Activities (6 시간)
 
 1. 문제 코드 및 기본 요구사항 분석 (0.5시간)
    - 기본 코드구조, 로직 이해
-   - Mom Test · R-G-I-O · [`Report/01`](Report/01.UnitConverter_ProblemDefinition_Report.md) · [`docs/PRD.md`](docs/PRD.md)
+   - Mom Test · R-G-I-O · [`Report/001`](Report/001-UnitConverter_ProblemDefinition_Report.md) · [`docs/PRD.md`](docs/PRD.md)
 2. 기본 요구사항 및 품질 요구사항 구현 (2시간)
    - OCP를 만족하는 인터페이스 구현
    - SRP를 만족하도록 클래스 구현
@@ -143,4 +157,4 @@ TDD 절차 SSOT: [`.cursor/skills/unit-converter-tdd/SKILL.md`](.cursor/skills/u
    - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
    - TC를 추가해보면서 개선에 미친 영향, TC 작성 팁
    - 클린코드와 리팩토링에서 느낀 장점과 어려운점
-   - 회고 보고서: `Report/` ( `/session-export` )
+   - 회고 보고서: [`Report/002-ecb-harness-rules-alignment-report.md`](Report/002-ecb-harness-rules-alignment-report.md) · `/session-export`
