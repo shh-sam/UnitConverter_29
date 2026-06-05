@@ -1,0 +1,4 @@
+# Runtime (stdlib only — no packages required to run UnitConverter.py)
+
+# Development / testing
+pytest>=8.0,<9
